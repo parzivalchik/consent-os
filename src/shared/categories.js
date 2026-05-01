@@ -32,6 +32,9 @@ const OLD_CATEGORIES = {
 };
 
 function categorizeService(serviceName) {
+  if (!serviceName || typeof serviceName !== 'string') {
+    return 'analytical';
+  }
   const name = serviceName.toLowerCase();
 
   for (const pattern of CATEGORY_PATTERNS.intrusive) {
