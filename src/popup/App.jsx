@@ -23,8 +23,15 @@ export default function App() {
   const [services, setServices] = useState([]);
   const [stats, setStats] = useState({});
   const [loading, setLoading] = useState(true);
+  const [isPurging, setIsPurging] = useState(false);
+  const [toast, setToast] = useState(null);
   const [expandedCategory, setExpandedCategory] = useState('intrusive');
   const [purgedCategories, setPurgedCategories] = useState({ essential: false, analytical: false, intrusive: false });
+
+  function showToast(message, type = 'success') {
+    setToast({ message, type });
+    setTimeout(() => setToast(null), 3000);
+  }
 
   useEffect(() => {
     loadData();
@@ -91,18 +98,42 @@ export default function App() {
   }
 
   async function handleKillSwitch() {
-    const allCategories = ['essential', 'analytical', 'intrusive'];
-    for (const category of allCategories) {
-      const servicesToPurge = groupedServices[category];
-      for (const service of servicesToPurge) {
-        try {
-          await sendMessage({ type: 'REVOKE_SERVICE', payload: { id: service.id } });
-        } catch (e) {
-          console.error('Failed to revoke:', service.id, e);
+    setIsPurging(true);
+    let successCount = 0;
+    let failCount = 0;
+
+    try {
+      const allCategories = ['essential', 'analytical', 'intrusive'];
+      for (const category of allCategories) {
+        const servicesToPurge = groupedServices[category];
+        for (const service of servicesToPurge) {
+          try {
+            const result = await sendMessage({ type: 'REVOKE_SERVICE', payload: { id: service.id } });
+            if (result?.success) {
+              successCount++;
+            } else {
+              failCount++;
+            }
+          } catch (e) {
+            console.error('Failed to revoke:', service.id, e);
+            failCount++;
+          }
         }
       }
+      
+      await loadData();
+      
+      if (failCount === 0) {
+        showToast(`Successfully purged ${successCount} services`);
+      } else {
+        showToast(`Purged ${successCount} services, ${failCount} failed`, 'error');
+      }
+    } catch (error) {
+      console.error('Kill switch error:', error);
+      showToast('Failed to execute kill switch', 'error');
+    } finally {
+      setIsPurging(false);
     }
-    await loadData();
   }
 
   if (loading) {
@@ -136,7 +167,16 @@ export default function App() {
       <KillSwitch
         onActivate={handleKillSwitch}
         active={purgedCategories.essential && purgedCategories.analytical && purgedCategories.intrusive}
+        disabled={isPurging}
       />
+
+      {toast && (
+        <div className={`fixed top-4 left-1/2 -translate-x-1/2 z-50 px-4 py-2 rounded-lg text-xs font-mono ${
+          toast.type === 'error' ? 'bg-red-600 text-white' : 'bg-neon-pink text-white'
+        }`}>
+          {toast.message}
+        </div>
+      )}
     </div>
   );
 }
