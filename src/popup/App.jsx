@@ -98,21 +98,44 @@ export default function App() {
   }
 
   async function handleKillSwitch() {
+    console.log('handleKillSwitch called');
+    console.log('groupedServices:', groupedServices);
+    
     setIsPurging(true);
     let successCount = 0;
     let failCount = 0;
 
     try {
       const allCategories = ['essential', 'analytical', 'intrusive'];
+      
+      // Count total services
+      let totalServices = 0;
+      for (const category of allCategories) {
+        const servicesToPurge = groupedServices[category];
+        console.log(`Category ${category}:`, servicesToPurge?.length, 'services');
+        totalServices += servicesToPurge?.length || 0;
+      }
+      
+      console.log('Total services to purge:', totalServices);
+      
+      if (totalServices === 0) {
+        showToast('No services to purge', 'error');
+        setIsPurging(false);
+        return;
+      }
+      
       for (const category of allCategories) {
         const servicesToPurge = groupedServices[category];
         for (const service of servicesToPurge) {
+          console.log('Revoking service:', service.id);
           try {
             const result = await sendMessage({ type: 'REVOKE_SERVICE', payload: { id: service.id } });
+            console.log('Revoke result:', result);
             if (result?.success) {
               successCount++;
             } else {
               failCount++;
+              console.log('Revoke failed:', result);
             }
           } catch (e) {
             console.error('Failed to revoke:', service.id, e);
@@ -122,6 +145,8 @@ export default function App() {
       }
       
       await loadData();
+      
+      console.log('Purging complete. Success:', successCount, 'Failed:', failCount);
       
       if (failCount === 0) {
         showToast(`Successfully purged ${successCount} services`);

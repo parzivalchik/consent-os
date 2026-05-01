@@ -4,14 +4,26 @@ export default function KillSwitch({ onActivate, active, disabled }) {
   const [confirming, setConfirming] = useState(false);
 
   function handleClick() {
-    if (disabled || confirming) return;
+    console.log('KillSwitch clicked, disabled:', disabled, 'confirming:', confirming);
     
-    if (confirming) {
+    if (disabled) {
+      console.log('KillSwitch blocked: isPurging is true');
+      return;
+    }
+    
+    if (!confirming) {
+      // First click - enter confirming state
+      console.log('Entering confirm mode');
+      setConfirming(true);
+      setTimeout(() => {
+        console.log('Confirm timeout - resetting');
+        setConfirming(false);
+      }, 3000);
+    } else {
+      // Second click - actually activate
+      console.log('Confirm clicked - activating kill switch');
       onActivate();
       setConfirming(false);
-    } else {
-      setConfirming(true);
-      setTimeout(() => setConfirming(false), 3000);
     }
   }
 
