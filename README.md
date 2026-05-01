@@ -35,7 +35,7 @@ Consent-os is a Chrome extension that provides a comprehensive privacy managemen
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/consent-os.git
+git clone https://github.com/parzivalchik/consent-os.git
 cd consent-os
 
 # Install dependencies
