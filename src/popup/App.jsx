@@ -173,10 +173,10 @@ export default function App() {
   }
 
   return (
-    <div className="flex flex-col h-screen bg-base overflow-hidden">
+    <div className="relative flex flex-col h-[500px] bg-base overflow-hidden">
       <Header score={privacyScore} servicesCount={services.length} />
 
-      <main className="flex-1 overflow-y-auto px-3 py-2">
+      <main className="flex-1 overflow-y-auto px-3 py-2 max-h-[200px]">
         <Timeline services={services} />
       </main>
 

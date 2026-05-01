@@ -12,6 +12,8 @@
   },
   "action": {
     "default_popup": "dist/popup.html",
+    "default_width": "360",
+    "default_height": "500",
     "default_icon": {
       "16": "images/icon-16.png",
       "32": "images/icon-32.png",
