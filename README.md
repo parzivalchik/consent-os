@@ -25,7 +25,7 @@ Consent-os 2.0 TACTICAL is a Chrome extension that provides a comprehensive priv
 - **Privacy Grading**: Provides A-F transparency scores for each service
 - **Permission Management**: Bulk revoke cookies and permissions for any domain
 - **Real-time Monitoring**: Tracks cookie creation/deletion events
-- **Timeline History**: Complete audit log of all privacy actions with yellow tactical nodes
+- **Timeline History**: Scrollable audit log of all privacy actions with yellow tactical nodes
 - **Export Options**: Export data as JSON, CSV, or PDF report
 - **Light/Dark Theme**: Toggle between themes with real-time sync between popup and dashboard
 
@@ -75,7 +75,7 @@ The new React-based dashboard provides a complete tactical command center with 5
 
 1. **Overview Tab**: Category distribution pie chart, all domains table, recent activity feed
 2. **Cookies Tab**: Searchable cookie table with domain/type filters, clear individual or all
-3. **Timeline Tab**: Vertical yellow timeline with event nodes, filter by event type
+3. **Timeline Tab**: Scrollable vertical yellow timeline (400px max height), event nodes, filter by event type and date range
 4. **Analysis Tab**: Third-party tracker list, data type distribution, risk analysis
 5. **Recommendations Tab**: Priority-based actions (High/Medium/Completed) with scrollable sections
 
@@ -84,7 +84,7 @@ The new React-based dashboard provides a complete tactical command center with 5
 The popup provides quick access to essential functions:
 
 - **Header**: Logo, title, theme toggle, DASH button, score indicator
-- **Timeline**: Recent tracker activity with risk indicators
+- **Timeline**: Scrollable recent tracker activity (200px max height) with risk indicators
 - **Category Sections**: Collapsible Essential/Analytical/Intrusive sections
 - **Kill Switch**: Fixed bottom CTA with confirmation flow
 

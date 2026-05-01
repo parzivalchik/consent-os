@@ -8,7 +8,7 @@ export default function TimelineTab({ events, theme }) {
   const filteredEvents = events.filter(e => {
     if (typeFilter && e.type !== typeFilter) return false;
     return true;
-  }).slice(0, 50);
+  });
 
   const panelClass = isLight ? 'bg-tac-light-panel border-tac-light-border' : 'bg-tac-panel border-tac-border';
   const textClass = isLight ? 'text-tac-light-text' : 'text-tac-white';
@@ -56,9 +56,9 @@ export default function TimelineTab({ events, theme }) {
         {filteredEvents.length === 0 ? (
           <div className={`text-center font-mono py-8 ${dimClass}`}>NO TIMELINE EVENTS</div>
         ) : (
-          <div className="relative">
+          <div className="relative max-h-[400px] overflow-y-auto">
             <div className={`absolute left-3 top-0 bottom-0 w-0.5 ${isLight ? 'bg-tac-light-yellow' : 'bg-tac-yellow'}`} />
-            <div className="space-y-6">
+            <div className="space-y-6 pb-2">
               {filteredEvents.map((event, i) => (
                 <div key={i} className="relative pl-10">
                   <div className={`absolute left-1.5 w-3 h-3 ${isLight ? 'bg-tac-light-yellow' : 'bg-tac-yellow'} border-2 ${isLight ? 'border-tac-light-bg' : 'border-tac-black'}`} />

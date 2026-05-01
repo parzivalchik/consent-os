@@ -2,8 +2,7 @@ export default function Timeline({ services, theme }) {
   const isLight = theme === 'light';
   const sortedServices = [...services]
     .filter(s => s.lastSeen)
-    .sort((a, b) => new Date(b.lastSeen) - new Date(a.lastSeen))
-    .slice(0, 12);
+    .sort((a, b) => new Date(b.lastSeen) - new Date(a.lastSeen));
 
   function formatTimeAgo(dateString) {
     if (!dateString) return '';
@@ -42,10 +41,10 @@ export default function Timeline({ services, theme }) {
   }
 
   return (
-    <div className="relative">
+    <div className="relative max-h-[200px] overflow-y-auto">
       <div className={`absolute left-2 top-0 bottom-0 w-px ${isLight ? 'bg-tac-light-border' : 'bg-base-lighter'}`} />
 
-      <div className="space-y-1">
+      <div className="space-y-1 pb-2">
         {sortedServices.map((service, index) => (
           <div key={service.id || index} className="flex items-center gap-2 relative pl-5">
             <div className={`absolute left-1.5 w-1.5 h-1.5 rounded-full ${getRiskColor(service.riskLevel)}`} />
@@ -75,12 +74,6 @@ export default function Timeline({ services, theme }) {
           </div>
         ))}
       </div>
-
-      {services.length > 12 && (
-        <div className="text-center pt-2">
-          <span className={`text-[9px] font-mono ${dimClass}`}>+{services.length - 12} more</span>
-        </div>
-      )}
     </div>
   );
 }
