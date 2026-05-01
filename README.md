@@ -1,13 +1,13 @@
-# Consent-os
+# Consent-os 2.0 TACTICAL
 
 <div align="center">
 
-![Version](https://img.shields.io/badge/version-1.0.0-blue)
+![Version](https://img.shields.io/badge/version-2.0-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![Platform](https://img.shields.io/badge/platform-Chrome-brightgreen)
 ![Manifest](https://img.shields.io/badge/manifest-V3-purple)
 
-**Minimalist Tactical Privacy Dashboard for Chrome**
+**Tactical Command Center - Military-Grade Privacy Dashboard for Chrome**
 
 </div>
 
@@ -15,17 +15,19 @@
 
 ## Overview
 
-Consent-os is a Chrome extension that provides a comprehensive privacy management dashboard. It scans your browser to identify domains with active data collection (cookies, history, bookmarks, downloads), categorizes them by type, assesses risk levels, and provides tools to manage and revoke permissions.
+Consent-os 2.0 TACTICAL is a Chrome extension that provides a comprehensive privacy management dashboard with a tactical "command center" aesthetic. It scans your browser to identify domains with active data collection (cookies, history, bookmarks, downloads), categorizes them by risk level, and provides powerful tools to manage and revoke permissions.
 
 ### Key Capabilities
 
 - **Automatic Domain Scanning**: Discovers all domains with browser data access
+- **Tactical Privacy Score**: Aggregate score (0-100) displayed with vibrant green indicator
 - **Risk Assessment**: Assigns High/Medium/Low risk scores based on data types
 - **Privacy Grading**: Provides A-F transparency scores for each service
 - **Permission Management**: Bulk revoke cookies and permissions for any domain
 - **Real-time Monitoring**: Tracks cookie creation/deletion events
-- **Timeline History**: Complete audit log of all privacy actions
+- **Timeline History**: Complete audit log of all privacy actions with yellow tactical nodes
 - **Export Options**: Export data as JSON, CSV, or PDF report
+- **Light/Dark Theme**: Toggle between themes with real-time sync between popup and dashboard
 
 ---
 
@@ -56,41 +58,43 @@ npm run build
 
 ## Features
 
-### Privacy Dashboard
+### TACTICAL Design System
 
-- **Privacy Score**: Aggregate score (0-100) based on data exposure
-- **Statistics**: Total domains, cookies, history entries tracked
-- **Category Breakdown**: Visual pie chart of data by category (Shopping, Social, Finance, etc.)
-- **Risk Distribution**: High/Medium/Low risk breakdown with counts
+- **Matte Black Background**: Flat #0C0C0C background throughout
+- **Neon Magenta Accents**: #FF00FF for branding icons and Kill Switch CTA
+- **Cyber Yellow Status**: #FFD700 for timeline nodes and warnings
+- **Vibrant Green Score**: #00FF41 for privacy score indicator
+- **JetBrains Mono Font**: Strictly monospaced typography
+- **Zero Border Radius**: Sharp corners everywhere - no rounded elements
+- **1px Thin Borders**: Data-dense modular grid system
+- **No Shadows**: Flat design aesthetic
 
-### Domain Management
+### Privacy Dashboard (React Full-Page)
 
-- **Service List**: All tracked domains with risk indicators
-- **Detail View**: Full breakdown of data types collected per domain
-- **Risk Assessment**: Weighted scoring based on cookie count, permissions, history
-- **Legal Summaries**: Pre-defined privacy policy summaries for major sites (Google, Facebook, Amazon, etc.)
-- **Transparency Grades**: A-F grading based on data collection practices
+The new React-based dashboard provides a complete tactical command center with 5 tabs:
 
-### Permission Controls
+1. **Overview Tab**: Category distribution pie chart, all domains table, recent activity feed
+2. **Cookies Tab**: Searchable cookie table with domain/type filters, clear individual or all
+3. **Timeline Tab**: Vertical yellow timeline with event nodes, filter by event type
+4. **Analysis Tab**: Third-party tracker list, data type distribution, risk analysis
+5. **Recommendations Tab**: Priority-based actions (High/Medium/Completed) with scrollable sections
 
-- **Bulk Selection**: Select multiple domains for batch operations
-- **One-Click Revoke**: Remove all cookies and permissions for selected domains
-- **Clear All Cookies**: Global cookie clearing with domain filtering
-- **Selective Revocation**: Target specific domains for granular control
+### Extension Popup (React)
 
-### Analysis Tools
+The popup provides quick access to essential functions:
 
-- **Third-Party Connections**: Identify tracking domains across multiple sites
-- **Data Type Distribution**: Breakdown of what data types are collected (cookies, history, bookmarks, etc.)
-- **Recommendations**: AI-generated privacy improvement suggestions
+- **Header**: Logo, title, theme toggle, DASH button, score indicator
+- **Timeline**: Recent tracker activity with risk indicators
+- **Category Sections**: Collapsible Essential/Analytical/Intrusive sections
+- **Kill Switch**: Fixed bottom CTA with confirmation flow
 
-### Additional Features
+### Theme System
 
-- **Dark/Light Theme**: Toggle between light and dark modes
-- **Timeline View**: Chronological history of all privacy events
-- **Search & Filter**: Search domains, filter by category/risk
-- **Export**: Generate JSON, CSV, or PDF reports
-- **Real-time Updates**: Live cookie monitoring with instant updates
+- **Light/Dark Toggle**: Sun/moon icon in header of both popup and dashboard
+- **Real-Time Sync**: Theme changes sync instantly between popup and dashboard using chrome.storage.local
+- **Persistence**: Theme preference saved across browser sessions
+- **System Fallback**: Respects OS prefers-color-scheme setting when no preference saved
+- **Graceful Fallback**: Uses localStorage if chrome.storage unavailable
 
 ---
 
@@ -98,55 +102,73 @@ npm run build
 
 ```
 consent-os/
-├── core/                        # Core business logic
-│   ├── storage.js              # Chrome Storage abstraction
-│   ├── services.js             # Data models & service management
-│   └── messaging.js            # Inter-component message passing
+├── src/
+│   ├── dashboard/              # React full-page dashboard
+│   │   ├── App.jsx            # Main dashboard component
+│   │   ├── main.jsx           # Entry point
+│   │   ├── index.css          # Dashboard styles
+│   │   └── components/         # Dashboard UI components
+│   │       ├── Header.jsx      # Logo, title, score, theme toggle, export
+│   │       ├── ScoreBanner.jsx # Privacy score, stats, category bars
+│   │       ├── TabNav.jsx      # 5-tab navigation
+│   │       ├── KillSwitch.jsx  # Large magenta CTA
+│   │       ├── Toast.jsx       # Notification system
+│   │       └── tabs/           # Tab content components
+│   │           ├── OverviewTab.jsx
+│   │           ├── CookiesTab.jsx
+│   │           ├── TimelineTab.jsx
+│   │           ├── AnalysisTab.jsx
+│   │           └── RecommendationsTab.jsx
+│   ├── popup/                  # Extension popup (React)
+│   │   ├── App.jsx            # Main popup component
+│   │   ├── main.jsx           # Entry point
+│   │   ├── index.css          # Popup styles
+│   │   └── components/        # Popup UI components
+│   │       ├── Header.jsx     # Logo, title, theme toggle, score
+│   │       ├── Timeline.jsx   # Activity feed
+│   │       ├── CategorySection.jsx # Collapsible category sections
+│   │       ├── KillSwitch.jsx # Bottom CTA
+│   │       └── PurgeToggle.jsx # Per-category toggle
+│   └── shared/                # Shared utilities
+│       └── categories.js      # Domain categorization (essential/analytical/intrusive)
+├── dist/                      # Built output (popup.html + dashboard.html)
 ├── background/
-│   └── service_worker.js       # Main extension logic & data collection
-├── popup/                       # Browser action popup (lightweight UI)
-│   ├── popup.html
-│   ├── popup.js
-│   └── popup.css
-├── options/                     # Full settings/dashboard page
-│   ├── options.html
-│   ├── options.js
-│   └── options.css
-├── src/                         # Source files for build (Vite)
-├── images/                      # Extension icons
-├── _locales/                    # Internationalization
-├── dist/                        # Built output
-├── manifest.json                # Extension manifest (V3)
-├── package.json                 # Dependencies & scripts
-├── vite.config.js              # Build configuration
-├── tailwind.config.js          # Tailwind CSS config
-└── postcss.config.js           # PostCSS config
+│   └── service_worker.js      # Background script & data collection
+├── images/                    # Extension icons
+├── _locales/                 # Internationalization
+├── manifest.json             # Extension manifest (V3)
+├── package.json              # Dependencies & scripts
+├── vite.config.js            # Build configuration
+├── tailwind.config.js       # Tailwind CSS config (tactical colors)
+└── postcss.config.js        # PostCSS config
 ```
 
-### Core Modules
+### Color Palette
 
-| Module | Purpose |
-|--------|---------|
-| `storage.js` | Abstracts Chrome `storage.local` API for persistent data |
-| `services.js` | Manages service CRUD, risk levels, categories, stats |
-| `messaging.js` | Handles message passing between popup, options, and background |
-| `service_worker.js` | Main logic: data collection, domain categorization, risk calculation, event listeners |
+| Token | Hex | Usage |
+|-------|-----|-------|
+| tac-black | #0C0C0C | Background |
+| tac-dark | #121212 | Secondary background |
+| tac-panel | #1A1A1A | Panel backgrounds |
+| tac-border | #333333 | Borders |
+| tac-magenta | #FF00FF | Primary accent, Kill Switch |
+| tac-yellow | #FFD700 | Timeline, warnings |
+| tac-green | #00FF41 | Score indicator |
+| tac-white | #E6E6E6 | Primary text |
+| tac-gray | #888888 | Secondary text |
+| tac-red | #FF4444 | High risk |
 
-### Data Flow
+### Light Mode Palette
 
-```
-Browser Data Sources          Processing Pipeline           UI Display
-─────────────────────         ───────────────────          ──────────
-Cookies ─────────────────┐
-                         │
-History ────────────────┼──► collectAllData() ──────────► Service Model
-                         │        │                           │
-Bookmarks ──────────────┤        ▼                           │
-                         │   categorizeDomain()            ▼
-Downloads ──────────────┤   calculateRiskScore()         Dashboard UI
-                         │   getLegalSummary()
-TopSites ───────────────┘   calculateClarityScore()      (Popup/Options)
-```
+| Token | Hex | Usage |
+|-------|-----|-------|
+| tac-light-bg | #F5F5F5 | Background |
+| tac-light-panel | #FFFFFF | Panel backgrounds |
+| tac-light-border | #E0E0E0 | Borders |
+| tac-light-text | #1A1A1A | Primary text |
+| tac-light-magenta | #CC00CC | Accent |
+| tac-light-green | #00AA2B | Score indicator |
+| tac-light-yellow | #CC9900 | Timeline, warnings |
 
 ---
 
@@ -197,9 +219,9 @@ The extension calculates risk using weighted scoring:
 
 - **Build Tool**: [Vite](https://vitejs.dev/) - Fast frontend tooling
 - **Styling**: [Tailwind CSS](https://tailwindcss.com/) - Utility-first CSS framework
-- **UI Framework**: [React](https://react.dev/) - Component-based UI (optional, for advanced features)
+- **UI Framework**: [React 18](https://react.dev/) - Component-based UI
 - **Browser API**: Chrome Extension Manifest V3
-- **Storage**: Chrome `chrome.storage.local`
+- **Storage**: Chrome `chrome.storage.local` with localStorage fallback
 
 ---
 
@@ -218,18 +240,21 @@ npm run build
 npm run preview
 ```
 
-### Adding New Features
-
-1. **New Category**: Add domain patterns to `CATEGORY_PATTERNS` in `service_worker.js`
-2. **New Risk Weight**: Add entry to `RISK_WEIGHTS` object
-3. **New Legal Summary**: Add domain entry to `LEGAL_SUMMARIES` object
-4. **New UI Tab**: Add section to `options/options.html` and corresponding handler in `options.js`
-
 ---
 
 ## Screenshots
 
-> _Add screenshots of the popup dashboard and full options page here_
+### Dashboard (Dark Mode)
+![Dashboard Dark Mode](screenshots/dashboard-dark.png)
+
+### Dashboard (Light Mode)
+![Dashboard Light Mode](screenshots/dashboard-light.png)
+
+### Popup (Dark Mode)
+![Popup Dark Mode](screenshots/popup-dark.png)
+
+### Popup (Light Mode)
+![Popup Light Mode](screenshots/popup-light.png)
 
 ---
 
@@ -255,3 +280,4 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 - Inspired by privacy-first design principles
 - Built with modern Chrome Extension APIs
+- Tactical UI inspired by military command interfaces
