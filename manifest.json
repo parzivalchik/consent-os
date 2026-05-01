@@ -1,0 +1,38 @@
+{
+  "manifest_version": 3,
+  "name": "Consent-os2.0",
+  "version": "1.0.0",
+  "description": "Minimalist Tactical Privacy Dashboard",
+  "default_locale": "en",
+  "icons": {
+    "16": "images/icon-16.png",
+    "32": "images/icon-32.png",
+    "48": "images/icon-48.png",
+    "128": "images/icon-128.png"
+  },
+  "action": {
+    "default_popup": "dist/popup.html",
+    "default_icon": {
+      "16": "images/icon-16.png",
+      "32": "images/icon-32.png",
+      "48": "images/icon-48.png",
+      "128": "images/icon-128.png"
+    }
+  },
+  "background": {
+    "service_worker": "background/service_worker.js"
+  },
+  "options_page": "options/options.html",
+  "permissions": [
+    "cookies",
+    "history",
+    "bookmarks",
+    "downloads",
+    "storage",
+    "topSites",
+    "tabs"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ]
+}

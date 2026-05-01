@@ -1,0 +1,10 @@
+{
+  "extension_name": {
+    "message": "Consent-os2.0",
+    "description": "The name of the extension"
+  },
+  "extension_description": {
+    "message": "Centralized consent management - take control of your personal data across all services",
+    "description": "Description of the extension"
+  }
+}

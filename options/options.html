@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Consent-os2.0 - Privacy Dashboard</title>
+  <link rel="stylesheet" href="options.css">
+</head>
+<body>
+  <div class="dashboard">
+    <header class="header">
+      <div class="header-brand">
+        <div class="logo">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="header-text">
+          <h1>Consent-os2.0</h1>
+          <span class="tagline">Full Privacy Dashboard</span>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button class="btn btn-ghost" id="refresh-btn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M23 4v6h-6M1 20v-6h6"/>
+            <path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/>
+          </svg>
+          Refresh
+        </button>
+        <button class="theme-toggle" id="theme-toggle" title="Toggle Theme">
+          <svg class="sun-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="5"/>
+            <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+          </svg>
+          <svg class="moon-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>
+          </svg>
+        </button>
+        <div class="dropdown">
+          <button class="btn btn-primary" id="export-btn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+              <polyline points="7 10 12 15 17 10"/>
+              <line x1="12" y1="15" x2="12" y2="3"/>
+            </svg>
+            Export
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="6 9 12 15 18 9"/>
+            </svg>
+          </button>
+          <div class="dropdown-menu" id="export-menu">
+            <button data-format="json">Export as JSON</button>
+            <button data-format="csv">Export as CSV</button>
+            <button data-format="pdf">Export as PDF Report</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="score-banner">
+      <div class="score-main">
+        <div class="score-label">Privacy Score</div>
+        <div class="score-value">
+          <span id="privacy-score">--</span>
+          <span class="score-max">/100</span>
+        </div>
+        <div class="score-bar">
+          <div class="score-bar-fill" id="score-bar-fill"></div>
+        </div>
+      </div>
+      <div class="score-stats">
+        <div class="stat-box">
+          <span class="stat-value" id="stat-cookies">0</span>
+          <span class="stat-label">Total Cookies</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-value" id="stat-domains">0</span>
+          <span class="stat-label">Domains</span>
+        </div>
+        <div class="stat-box danger">
+          <span class="stat-value" id="stat-high">0</span>
+          <span class="stat-label">High Risk</span>
+        </div>
+        <div class="stat-box warning">
+          <span class="stat-value" id="stat-medium">0</span>
+          <span class="stat-label">Medium Risk</span>
+        </div>
+        <div class="stat-box safe">
+          <span class="stat-value" id="stat-low">0</span>
+          <span class="stat-label">Low Risk</span>
+        </div>
+      </div>
+    </div>
+
+    <nav class="tabs">
+      <button class="tab active" data-tab="overview">Overview</button>
+      <button class="tab" data-tab="cookies">Cookies</button>
+      <button class="tab" data-tab="timeline">Timeline</button>
+      <button class="tab" data-tab="analysis">Analysis</button>
+      <button class="tab" data-tab="recommendations">Recommendations</button>
+    </nav>
+
+    <main class="content">
+      <!-- Overview Tab -->
+      <section class="tab-content active" id="overview-tab">
+        <div class="overview-grid">
+          <div class="card full-width">
+            <h3>Data by Category</h3>
+            <div class="category-section">
+              <div class="pie-container">
+                <svg class="pie-chart" id="category-chart" viewBox="0 0 500 500"></svg>
+                <div class="pie-tooltip" id="pie-tooltip"></div>
+              </div>
+              <div class="category-legend" id="category-legend"></div>
+            </div>
+          </div>
+          <div class="card full-width">
+            <h3>All Domains</h3>
+            <div class="search-bar">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"/>
+                <path d="M21 21l-4.35-4.35"/>
+              </svg>
+              <input type="text" id="domain-search" placeholder="Search domains...">
+              <button class="search-clear" id="search-clear" title="Clear search">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M18 6L6 18M6 6l12 12"/>
+                </svg>
+              </button>
+            </div>
+            <div class="top-domains" id="top-domains">
+              <div class="loading">Loading...</div>
+            </div>
+          </div>
+          <div class="card full-width">
+            <h3>Recent Activity</h3>
+            <div class="recent-activity" id="recent-activity">
+              <div class="loading">Loading...</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Cookies Tab -->
+      <section class="tab-content" id="cookies-tab">
+        <div class="toolbar">
+          <div class="search-box">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"/>
+              <path d="M21 21l-4.35-4.35"/>
+            </svg>
+            <input type="text" id="cookie-search" placeholder="Search cookies...">
+          </div>
+          <div class="filters">
+            <select id="cookie-domain-filter">
+              <option value="">All Domains</option>
+            </select>
+            <select id="cookie-secure-filter">
+              <option value="">All Types</option>
+              <option value="true">Secure Only</option>
+              <option value="false">Non-Secure</option>
+            </select>
+          </div>
+          <button class="btn btn-sm btn-ghost" id="clear-all-cookies">Clear All Cookies</button>
+        </div>
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Domain</th>
+                <th>Cookie Name</th>
+                <th>Value</th>
+                <th>Expires</th>
+                <th>Secure</th>
+                <th>HttpOnly</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="cookies-table">
+              <tr><td colspan="7" class="loading">Loading cookies...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Timeline Tab -->
+      <section class="tab-content" id="timeline-tab">
+        <div class="toolbar">
+          <div class="filters">
+            <select id="timeline-filter">
+              <option value="">All Events</option>
+              <option value="domain_added">Domain Added</option>
+              <option value="cookie_created">Cookie Created</option>
+              <option value="cookie_deleted">Cookie Deleted</option>
+              <option value="revoke">Access Revoked</option>
+              <option value="cleared">Cookies Cleared</option>
+            </select>
+            <select id="timeline-range">
+              <option value="7">Last 7 days</option>
+              <option value="30" selected>Last 30 days</option>
+              <option value="90">Last 90 days</option>
+              <option value="all">All time</option>
+            </select>
+          </div>
+        </div>
+        <div class="timeline-container" id="timeline">
+          <div class="loading">Loading timeline...</div>
+        </div>
+      </section>
+
+      <!-- Analysis Tab -->
+      <section class="tab-content" id="analysis-tab">
+        <div class="analysis-grid">
+          <div class="card">
+            <h3>🕸️ Third-Party Connections</h3>
+            <p class="card-desc">Domains that track you across multiple sites</p>
+            <div class="tracker-list" id="tracker-list">
+              <div class="loading">Analyzing...</div>
+            </div>
+          </div>
+          <div class="card">
+            <h3>📊 Data Type Distribution</h3>
+            <p class="card-desc">What types of data are being collected</p>
+            <div class="data-distribution" id="data-distribution">
+              <div class="loading">Analyzing...</div>
+            </div>
+          </div>
+          </div>
+      </section>
+
+      <!-- Recommendations Tab -->
+      <section class="tab-content" id="recommendations-tab">
+        <div class="recommendations-container">
+          <div class="rec-section high">
+            <h3>🔴 High Priority</h3>
+            <p class="rec-desc">Actions that significantly improve your privacy</p>
+            <div class="rec-list" id="rec-high">
+              <div class="loading">Analyzing...</div>
+            </div>
+          </div>
+          <div class="rec-section medium">
+            <h3>🟡 Medium Priority</h3>
+            <p class="rec-desc">Actions to consider for better privacy</p>
+            <div class="rec-list" id="rec-medium">
+              <div class="loading">Analyzing...</div>
+            </div>
+          </div>
+          <div class="rec-section low">
+            <h3>🟢 Completed</h3>
+            <p class="rec-desc">Privacy goals you've achieved</p>
+            <div class="rec-list" id="rec-completed">
+              <div class="loading">Analyzing...</div>
+            </div>
+          </div>
+        </div>
+        <div class="rec-actions">
+          <button class="btn btn-primary" id="apply-recs">Apply All Recommendations</button>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <span>Last updated: <span id="last-updated">Never</span></span>
+      <span>Consent-os2.0 v1.0.0</span>
+    </footer>
+  </div>
+
+  <!-- Cookie Detail Modal -->
+  <div class="modal-overlay" id="cookie-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Cookie Details</h3>
+        <button class="modal-close" id="close-cookie-modal">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 6L6 18M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body" id="cookie-detail-body"></div>
+    </div>
+  </div>
+
+  <div class="toast-container" id="toast-container"></div>
+
+  <script src="options.js"></script>
+</body>
+</html>
