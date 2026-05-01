@@ -255,4 +255,3 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 - Inspired by privacy-first design principles
 - Built with modern Chrome Extension APIs
--感谢所有隐私倡导者的贡献
