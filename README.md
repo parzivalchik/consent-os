@@ -28,6 +28,7 @@ Consent-os 2.0 TACTICAL is a Chrome extension that provides a comprehensive priv
 - **Timeline History**: Scrollable audit log of all privacy actions with yellow tactical nodes
 - **Export Options**: Export data as JSON, CSV, or PDF report
 - **Light/Dark Theme**: Toggle between themes with real-time sync between popup and dashboard
+- **Processing State**: Batch recommendation application shows "PROCESSING..." state, disables buttons during sequential revoke operations
 
 ---
 
@@ -77,7 +78,7 @@ The new React-based dashboard provides a complete tactical command center with 5
 2. **Cookies Tab**: Searchable cookie table with domain/type filters, clear individual or all
 3. **Timeline Tab**: Scrollable vertical yellow timeline (400px max height), event nodes, filter by event type and date range
 4. **Analysis Tab**: Third-party tracker list, data type distribution, risk analysis
-5. **Recommendations Tab**: Priority-based actions (High/Medium/Completed) with scrollable sections
+5. **Recommendations Tab**: Priority-based actions (High/Medium/Completed) with scrollable sections. Features sequential batch processing - "Apply All" processes services one-by-one using for...of loop with await, showing "PROCESSING..." state during operation. Individual REVOKE buttons disabled while batch operation in progress.
 
 ### Extension Popup (React)
 
@@ -255,6 +256,24 @@ npm run preview
 
 ### Popup (Light Mode)
 ![Popup Light Mode](screenshots/popup-light.png)
+
+---
+
+## Bug Fixes v2.0.x
+
+### Flickering Animations Removed
+- **Score Indicator**: Removed `animate-ping` CSS animation from the green score status dot in Header.jsx - the indicator now displays as a solid, non-flickering green dot
+- **Toast Notifications**: Removed `animate-pulse` from Toast.jsx - notifications now appear instantly without pulsing animation
+- **Kill Switch**: Removed `animate-pulse` from the confirm text in KillSwitch.jsx - confirmation message displays without visual flickering
+
+### Apply Recommendations Fixed
+- **Previous Issue**: The "Apply All Recommendations" button used `forEach` which fired all revoke requests concurrently without awaiting, causing race conditions and silent failures
+- **Solution**: Replaced with sequential `for...of` loop with `await` - each service is properly revoked before moving to the next
+- **Processing State**: Added `isProcessingRecommendations` state in App.jsx that:
+  - Shows "PROCESSING..." text on the button during batch operation
+  - Disables all individual REVOKE buttons while processing
+  - Provides success/failure toast after completion (e.g., "REVOKED 5 SERVICES" or "3 REVOKED, 2 FAILED")
+- **Error Handling**: Each individual service revoke wrapped in try/catch so one failure doesn't stop the entire batch
 
 ---
 
