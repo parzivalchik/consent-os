@@ -165,18 +165,18 @@ export default function App() {
     return (
       <div className="flex items-center justify-center h-screen bg-base">
         <div className="flex flex-col items-center gap-3">
-          <div className="w-8 h-8 border-2 border-base-lighter border-t-[#FF00FF] animate-spin" />
-          <span className="text-ghost-meta text-xs font-mono">SCANNING...</span>
+          <div className="w-8 h-8 border-2 border-base-lighter border-t-neon-pink rounded-full animate-spin" />
+          <span className="text-ghost-dim text-xs">Scanning...</span>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="relative flex flex-col h-[500px] bg-base overflow-hidden">
+    <div className="flex flex-col h-screen bg-base overflow-hidden">
       <Header score={privacyScore} servicesCount={services.length} />
 
-      <main className="flex-1 overflow-y-auto px-3 py-2 max-h-[200px]">
+      <main className="flex-1 overflow-y-auto px-3 py-2">
         <Timeline services={services} />
       </main>
 
@@ -196,8 +196,8 @@ export default function App() {
       />
 
       {toast && (
-        <div className={`fixed top-4 left-1/2 -translate-x-1/2 z-50 px-4 py-2 text-xs font-mono ${
-          toast.type === 'error' ? 'bg-red-600 text-white border border-red-600' : 'bg-[#FF00FF] text-[#121212] border border-[#FF00FF]'
+        <div className={`fixed top-4 left-1/2 -translate-x-1/2 z-50 px-4 py-2 rounded-lg text-xs font-mono ${
+          toast.type === 'error' ? 'bg-red-600 text-white' : 'bg-neon-pink text-white'
         }`}>
           {toast.message}
         </div>
