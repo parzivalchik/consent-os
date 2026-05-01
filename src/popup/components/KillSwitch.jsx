@@ -12,7 +12,6 @@ export default function KillSwitch({ onActivate, active, disabled }) {
     }
     
     if (!confirming) {
-      // First click - enter confirming state
       console.log('Entering confirm mode');
       setConfirming(true);
       setTimeout(() => {
@@ -20,7 +19,6 @@ export default function KillSwitch({ onActivate, active, disabled }) {
         setConfirming(false);
       }, 3000);
     } else {
-      // Second click - actually activate
       console.log('Confirm clicked - activating kill switch');
       onActivate();
       setConfirming(false);
@@ -33,18 +31,18 @@ export default function KillSwitch({ onActivate, active, disabled }) {
         type="button"
         onClick={handleClick}
         disabled={disabled}
-        className={`flex items-center gap-2 px-4 py-2.5 rounded-lg font-mono text-xs font-semibold transition-all ${
+        className={`flex items-center gap-2 px-4 py-2.5 font-mono text-xs font-bold transition-all ${
           disabled
-            ? 'bg-gray-600 text-gray-400 cursor-not-allowed'
+            ? 'bg-base-lighter text-ghost-meta border border-base-border cursor-not-allowed'
             : confirming
-              ? 'bg-red-600 text-white animate-pulse'
+              ? 'bg-[#FF00FF] text-[#121212] border-2 border-[#FF00FF] animate-pulse'
               : active
-                ? 'bg-neon-pink text-base animate-glow-pink'
-                : 'bg-base-lighter text-ghost border border-neon-pink/50 hover:border-neon-pink'
+                ? 'bg-[#FF00FF] text-[#121212] border-2 border-[#FF00FF]'
+                : 'bg-[#121212] text-ghost border-2 border-[#FF00FF] hover:bg-[#FF00FF] hover:text-[#121212]'
         }`}
       >
         {disabled ? (
-          <div className="w-3.5 h-3.5 border-2 border-current rounded-full animate-spin border-t-transparent" />
+          <div className="w-3.5 h-3.5 border-2 border-current rounded-none animate-spin border-t-transparent" />
         ) : (
           <svg
             width="14"
@@ -57,15 +55,15 @@ export default function KillSwitch({ onActivate, active, disabled }) {
             <path d="M18 6L6 18M6 6l12 12" />
           </svg>
         )}
-        <span>
+        <span className="uppercase">
           {disabled ? 'PURGING...' : confirming ? 'CONFIRM PURGE' : active ? 'ACTIVE' : 'KILL SWITCH'}
         </span>
       </button>
 
       {confirming && !disabled && (
         <div className="absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap">
-          <span className="text-[9px] text-ghost-muted font-mono">
-            Tap again to confirm
+          <span className="text-[9px] text-ghost-meta font-mono">
+            TAP AGAIN TO CONFIRM
           </span>
         </div>
       )}
