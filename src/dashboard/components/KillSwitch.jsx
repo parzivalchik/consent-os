@@ -36,7 +36,7 @@ export default function KillSwitch({ onActivate, disabled, serviceCount, theme }
         {confirming ? 'CONFIRM PURGE' : disabled ? 'PURGING...' : `KILL SWITCH (${serviceCount} SERVICES)`}
       </button>
       {confirming && (
-        <div className={`text-center text-xs font-mono mt-2 animate-pulse ${isLight ? 'text-tac-light-yellow' : 'text-tac-yellow'}`}>
+        <div className={`text-center text-xs font-mono mt-2 ${isLight ? 'text-tac-light-yellow' : 'text-tac-yellow'}`}>
           CLICK AGAIN TO CONFIRM - CANCEL IN 3 SECONDS
         </div>
       )}

@@ -40,6 +40,7 @@ export default function App() {
   const [loading, setLoading] = useState(true);
   const [toast, setToast] = useState(null);
   const [isPurging, setIsPurging] = useState(false);
+  const [isProcessingRecommendations, setIsProcessingRecommendations] = useState(false);
   const [lastUpdated, setLastUpdated] = useState(null);
   const [theme, setTheme] = useState('dark');
 
@@ -195,6 +196,35 @@ export default function App() {
     }
   }
 
+  async function handleApplyAllRecommendations(serviceIds) {
+    setIsProcessingRecommendations(true);
+    let successCount = 0;
+    let failCount = 0;
+
+    try {
+      for (const id of serviceIds) {
+        try {
+          await sendMessage({ type: 'REVOKE_SERVICE', payload: { id } });
+          successCount++;
+        } catch (e) {
+          failCount++;
+        }
+      }
+
+      await loadData();
+
+      if (failCount === 0) {
+        showToast(`REVOKED ${successCount} SERVICES`);
+      } else {
+        showToast(`${successCount} REVOKED, ${failCount} FAILED`, 'error');
+      }
+    } catch (error) {
+      showToast('FAILED TO APPLY RECOMMENDATIONS', 'error');
+    } finally {
+      setIsProcessingRecommendations(false);
+    }
+  }
+
   async function handleClearCookie(cookie) {
     try {
       await new Promise((resolve, reject) => {
@@ -318,6 +348,8 @@ export default function App() {
             services={services}
             stats={stats}
             onApplyRecommendation={handleRevokeService}
+            onApplyAll={handleApplyAllRecommendations}
+            isProcessing={isProcessingRecommendations}
             theme={theme}
           />
         )}

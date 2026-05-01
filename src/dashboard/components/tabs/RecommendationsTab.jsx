@@ -1,6 +1,6 @@
 import { getCategory, calculateRiskLevel } from '../../../shared/categories';
 
-export default function RecommendationsTab({ services, stats, onApplyRecommendation, theme }) {
+export default function RecommendationsTab({ services, stats, onApplyRecommendation, onApplyAll, isProcessing, theme }) {
   const isLight = theme === 'light';
 
   const highPriority = services
@@ -35,7 +35,7 @@ export default function RecommendationsTab({ services, stats, onApplyRecommendat
                   <div className={`text-sm font-mono ${textClass}`}>{rec.domain}</div>
                   <div className="text-xs font-mono text-tac-red">{rec.reason}</div>
                 </div>
-                <button onClick={() => onApplyRecommendation(rec.id)} className="px-3 py-1 border border-tac-red text-tac-red hover:bg-tac-red hover:text-tac-black text-xs font-mono transition-colors">
+                <button onClick={() => onApplyRecommendation(rec.id)} disabled={isProcessing} className={`px-3 py-1 border text-xs font-mono transition-colors ${isProcessing ? 'opacity-50 cursor-not-allowed' : ''} border-tac-red text-tac-red hover:bg-tac-red hover:text-tac-black`}>
                   REVOKE
                 </button>
               </div>
@@ -57,7 +57,7 @@ export default function RecommendationsTab({ services, stats, onApplyRecommendat
                   <div className={`text-sm font-mono ${textClass}`}>{rec.domain}</div>
                   <div className={`text-xs font-mono ${isLight ? 'text-tac-light-yellow' : 'text-tac-yellow'}`}>{rec.reason}</div>
                 </div>
-                <button onClick={() => onApplyRecommendation(rec.id)} className={`px-3 py-1 border text-xs font-mono transition-colors ${isLight ? 'border-tac-light-yellow text-tac-light-yellow hover:bg-tac-light-yellow hover:text-white' : 'border-tac-yellow text-tac-yellow hover:bg-tac-yellow hover:text-tac-black'}`}>
+                <button onClick={() => onApplyRecommendation(rec.id)} disabled={isProcessing} className={`px-3 py-1 border text-xs font-mono transition-colors ${isProcessing ? 'opacity-50 cursor-not-allowed' : ''} ${isLight ? 'border-tac-light-yellow text-tac-light-yellow hover:bg-tac-light-yellow hover:text-white' : 'border-tac-yellow text-tac-yellow hover:bg-tac-yellow hover:text-tac-black'}`}>
                   REVOKE
                 </button>
               </div>
@@ -88,8 +88,12 @@ export default function RecommendationsTab({ services, stats, onApplyRecommendat
 
       {hasRecommendations && (
         <div className="p-4">
-          <button onClick={() => allServices.forEach(s => onApplyRecommendation(s.id))} className={`w-full py-3 border-2 text-sm font-bold font-mono transition-colors ${isLight ? 'border-tac-light-magenta text-tac-light-magenta hover:bg-tac-light-magenta hover:text-white' : 'border-tac-magenta text-tac-magenta hover:bg-tac-magenta hover:text-tac-black'}`}>
-            APPLY ALL RECOMMENDATIONS
+          <button 
+            onClick={() => onApplyAll(allServices.map(s => s.id))} 
+            disabled={isProcessing}
+            className={`w-full py-3 border-2 text-sm font-bold font-mono transition-colors ${isProcessing ? 'opacity-50 cursor-wait' : ''} ${isLight ? 'border-tac-light-magenta text-tac-light-magenta hover:bg-tac-light-magenta hover:text-white' : 'border-tac-magenta text-tac-magenta hover:bg-tac-magenta hover:text-tac-black'}`}
+          >
+            {isProcessing ? 'PROCESSING...' : 'APPLY ALL RECOMMENDATIONS'}
           </button>
         </div>
       )}

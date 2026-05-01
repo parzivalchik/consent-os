@@ -90,10 +90,7 @@ export default function Header({ score, onRefresh, onExport, theme, onToggleThem
             <div className={`text-2xl font-bold font-mono ${isLight ? 'text-tac-light-green' : 'text-tac-green'}`}>{score}</div>
             <div className={`text-[10px] font-mono ${isLight ? 'text-tac-light-dim' : 'text-tac-gray'}`}>SCORE</div>
           </div>
-          <div className="w-3 h-3 relative">
-            <div className={`w-3 h-3 absolute ${isLight ? 'bg-tac-light-green' : 'bg-tac-green'}`} />
-            <div className={`w-3 h-3 absolute animate-ping ${isLight ? 'bg-tac-light-green' : 'bg-tac-green'}`} />
-          </div>
+          <div className={`w-3 h-3 ${isLight ? 'bg-tac-light-green' : 'bg-tac-green'}`} />
         </div>
       </div>
     </header>
