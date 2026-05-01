@@ -27,6 +27,36 @@ export default function App() {
   const [toast, setToast] = useState(null);
   const [expandedCategory, setExpandedCategory] = useState('intrusive');
   const [purgedCategories, setPurgedCategories] = useState({ essential: false, analytical: false, intrusive: false });
+  const [theme, setTheme] = useState('dark');
+
+  useEffect(() => {
+    // Try chrome.storage.local first (shared across contexts)
+    try {
+      chrome.storage.local.get('consent-os-theme', (result) => {
+        if (result['consent-os-theme']) {
+          setTheme(result['consent-os-theme']);
+        } else if (window.matchMedia('(prefers-color-scheme: light)').matches) {
+          setTheme('light');
+        }
+      });
+    } catch (e) {
+      // Fallback to localStorage
+      const saved = localStorage.getItem('consent-os-theme');
+      if (saved) setTheme(saved);
+      else if (window.matchMedia('(prefers-color-scheme: light)').matches) setTheme('light');
+    }
+  }, []);
+
+  function toggleTheme() {
+    const newTheme = theme === 'dark' ? 'light' : 'dark';
+    setTheme(newTheme);
+    // Save to chrome.storage.local for sync
+    try {
+      chrome.storage.local.set({ 'consent-os-theme': newTheme });
+    } catch (e) {
+      localStorage.setItem('consent-os-theme', newTheme);
+    }
+  }
 
   function showToast(message, type = 'success') {
     setToast({ message, type });
@@ -163,21 +193,21 @@ export default function App() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-screen bg-base">
+      <div className={`flex items-center justify-center h-screen ${theme === 'light' ? 'bg-tac-light-bg' : 'bg-base'}`}>
         <div className="flex flex-col items-center gap-3">
-          <div className="w-8 h-8 border-2 border-base-lighter border-t-neon-pink rounded-full animate-spin" />
-          <span className="text-ghost-dim text-xs">Scanning...</span>
+          <div className={`w-8 h-8 border-2 rounded-full animate-spin ${theme === 'light' ? 'border-tac-light-border border-t-tac-light-magenta' : 'border-base-lighter border-t-neon-pink'}`} />
+          <span className={`text-xs ${theme === 'light' ? 'text-tac-light-dim' : 'text-ghost-dim'}`}>Scanning...</span>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col h-screen bg-base overflow-hidden">
-      <Header score={privacyScore} servicesCount={services.length} />
+    <div className={`flex flex-col h-screen overflow-hidden ${theme === 'light' ? 'bg-tac-light-bg' : 'bg-base'}`}>
+      <Header score={privacyScore} servicesCount={services.length} theme={theme} onToggleTheme={toggleTheme} />
 
       <main className="flex-1 overflow-y-auto px-3 py-2">
-        <Timeline services={services} />
+        <Timeline services={services} theme={theme} />
       </main>
 
       <CategorySection
@@ -187,18 +217,18 @@ export default function App() {
         setExpandedCategory={setExpandedCategory}
         purgedCategories={purgedCategories}
         onPurgeToggle={handlePurgeToggle}
+        theme={theme}
       />
 
       <KillSwitch
         onActivate={handleKillSwitch}
         active={purgedCategories.essential && purgedCategories.analytical && purgedCategories.intrusive}
         disabled={isPurging}
+        theme={theme}
       />
 
       {toast && (
-        <div className={`fixed top-4 left-1/2 -translate-x-1/2 z-50 px-4 py-2 rounded-lg text-xs font-mono ${
-          toast.type === 'error' ? 'bg-red-600 text-white' : 'bg-neon-pink text-white'
-        }`}>
+        <div className={`fixed top-4 left-1/2 -translate-x-1/2 z-50 px-4 py-2 text-xs font-mono ${theme === 'light' ? 'bg-tac-light-magenta text-white' : toast.type === 'error' ? 'bg-red-600 text-white' : 'bg-neon-pink text-white'}`}>
           {toast.message}
         </div>
       )}

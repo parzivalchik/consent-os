@@ -41,6 +41,45 @@ export default function App() {
   const [toast, setToast] = useState(null);
   const [isPurging, setIsPurging] = useState(false);
   const [lastUpdated, setLastUpdated] = useState(null);
+  const [theme, setTheme] = useState('dark');
+
+  useEffect(() => {
+    // Try chrome.storage.local first (shared across contexts)
+    try {
+      chrome.storage.local.get('consent-os-theme', (result) => {
+        if (result['consent-os-theme']) {
+          setTheme(result['consent-os-theme']);
+        } else if (window.matchMedia('(prefers-color-scheme: light)').matches) {
+          setTheme('light');
+        }
+      });
+    } catch (e) {
+      // Fallback to localStorage
+      const saved = localStorage.getItem('consent-os-theme');
+      if (saved) setTheme(saved);
+      else if (window.matchMedia('(prefers-color-scheme: light)').matches) setTheme('light');
+    }
+
+    // Listen for real-time changes from popup
+    const handleStorageChange = (changes, areaName) => {
+      if (areaName === 'local' && changes['consent-os-theme']) {
+        setTheme(changes['consent-os-theme'].newValue);
+      }
+    };
+
+    chrome.storage.onChanged.addListener(handleStorageChange);
+    return () => chrome.storage.onChanged.removeListener(handleStorageChange);
+  }, []);
+
+  function toggleTheme() {
+    const newTheme = theme === 'dark' ? 'light' : 'dark';
+    setTheme(newTheme);
+    try {
+      chrome.storage.local.set({ 'consent-os-theme': newTheme });
+    } catch (e) {
+      localStorage.setItem('consent-os-theme', newTheme);
+    }
+  }
 
   function showToast(message, type = 'success') {
     setToast({ message, type });
@@ -219,27 +258,30 @@ export default function App() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-tac-black flex items-center justify-center">
-        <div className="text-tac-magenta font-mono text-lg animate-pulse">INITIALIZING TACTICAL INTERFACE...</div>
+      <div className={`min-h-screen flex items-center justify-center ${theme === 'light' ? 'bg-tac-light-bg' : 'bg-tac-black'}`}>
+        <div className={`font-mono text-lg animate-pulse ${theme === 'light' ? 'text-tac-light-magenta' : 'text-tac-magenta'}`}>INITIALIZING TACTICAL INTERFACE...</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-tac-black flex flex-col">
+    <div className={`min-h-screen flex flex-col ${theme === 'light' ? 'bg-tac-light-bg' : 'bg-tac-black'}`}>
       <Header
         score={privacyScore}
         onRefresh={loadData}
         onExport={handleExport}
+        theme={theme}
+        onToggleTheme={toggleTheme}
       />
 
       <ScoreBanner
         score={privacyScore}
         stats={stats}
         categoryCounts={categoryCounts}
+        theme={theme}
       />
 
-      <TabNav tabs={tabs} activeTab={activeTab} onTabChange={setActiveTab} />
+      <TabNav tabs={tabs} activeTab={activeTab} onTabChange={setActiveTab} theme={theme} />
 
       <main className="flex-1 p-4 overflow-auto">
         {activeTab === 'overview' && (
@@ -249,6 +291,7 @@ export default function App() {
             categoryCounts={categoryCounts}
             timeline={timeline}
             onRevoke={handleRevokeService}
+            theme={theme}
           />
         )}
         {activeTab === 'cookies' && (
@@ -256,16 +299,18 @@ export default function App() {
             cookies={cookies}
             services={services}
             onClear={handleClearCookie}
+            theme={theme}
           />
         )}
         {activeTab === 'timeline' && (
-          <TimelineTab events={timeline} />
+          <TimelineTab events={timeline} theme={theme} />
         )}
         {activeTab === 'analysis' && (
           <AnalysisTab
             services={services}
             cookies={cookies}
             categoryCounts={categoryCounts}
+            theme={theme}
           />
         )}
         {activeTab === 'recommendations' && (
@@ -273,6 +318,7 @@ export default function App() {
             services={services}
             stats={stats}
             onApplyRecommendation={handleRevokeService}
+            theme={theme}
           />
         )}
       </main>
@@ -281,10 +327,11 @@ export default function App() {
         onActivate={handleKillSwitch}
         disabled={isPurging}
         serviceCount={services.length}
+        theme={theme}
       />
 
       {lastUpdated && (
-        <footer className="border-t border-tac-border px-4 py-2 text-xs text-tac-gray font-mono">
+        <footer className={`border-t px-4 py-2 text-xs font-mono ${theme === 'light' ? 'border-tac-light-border text-tac-light-dim' : 'border-tac-border text-tac-gray'}`}>
           Last updated: {lastUpdated.toLocaleString()} | CONSENT-OS 2.0 TACTICAL v1.0.0
         </footer>
       )}

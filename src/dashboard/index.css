@@ -33,3 +33,15 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: #444444;
 }
+
+.light ::-webkit-scrollbar-track {
+  background: #FFFFFF;
+}
+
+.light ::-webkit-scrollbar-thumb {
+  background: #CCCCCC;
+}
+
+.light ::-webkit-scrollbar-thumb:hover {
+  background: #AAAAAA;
+}

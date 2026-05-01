@@ -1,4 +1,5 @@
-export default function Timeline({ services }) {
+export default function Timeline({ services, theme }) {
+  const isLight = theme === 'light';
   const sortedServices = [...services]
     .filter(s => s.lastSeen)
     .sort((a, b) => new Date(b.lastSeen) - new Date(a.lastSeen))
@@ -22,13 +23,16 @@ export default function Timeline({ services }) {
 
   function getRiskColor(risk) {
     if (risk === 'high') return 'bg-red-500';
-    if (risk === 'medium') return 'bg-yellow-500';
-    return 'bg-green-500';
+    if (risk === 'medium') return isLight ? 'bg-tac-light-yellow' : 'bg-yellow-500';
+    return isLight ? 'bg-tac-light-green' : 'bg-green-500';
   }
+
+  const textClass = isLight ? 'text-tac-light-text' : 'text-ghost';
+  const dimClass = isLight ? 'text-tac-light-dim' : 'text-ghost-dim';
 
   if (sortedServices.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-8 text-ghost-dim">
+      <div className={`flex flex-col items-center justify-center py-8 ${dimClass}`}>
         <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="mb-2 opacity-50">
           <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
         </svg>
@@ -39,7 +43,7 @@ export default function Timeline({ services }) {
 
   return (
     <div className="relative">
-      <div className="absolute left-2 top-0 bottom-0 w-px bg-base-lighter" />
+      <div className={`absolute left-2 top-0 bottom-0 w-px ${isLight ? 'bg-tac-light-border' : 'bg-base-lighter'}`} />
 
       <div className="space-y-1">
         {sortedServices.map((service, index) => (
@@ -47,24 +51,22 @@ export default function Timeline({ services }) {
             <div className={`absolute left-1.5 w-1.5 h-1.5 rounded-full ${getRiskColor(service.riskLevel)}`} />
             <div className="flex-1 min-w-0">
               <div className="flex items-center justify-between">
-                <span className="text-xs text-ghost truncate font-mono">
+                <span className={`text-xs truncate font-mono ${textClass}`}>
                   {service.displayName || service.name}
                 </span>
-                <span className="text-[9px] text-ghost-muted font-mono">
+                <span className={`text-[9px] font-mono ${dimClass}`}>
                   {formatTimeAgo(service.lastSeen)}
                 </span>
               </div>
               <div className="flex items-center gap-1.5 mt-0.5">
-                <span className="text-[9px] text-ghost-muted font-mono">
+                <span className={`text-[9px] font-mono ${dimClass}`}>
                   {service.cookieCount || 0} cookies
                 </span>
-                <span className="text-[8px] text-ghost-muted">
-                  •
-                </span>
+                <span className={`text-[8px] ${dimClass}`}>•</span>
                 <span className={`text-[9px] font-mono ${
                   service.riskLevel === 'high' ? 'text-red-400' :
-                  service.riskLevel === 'medium' ? 'text-yellow-400' :
-                  'text-green-400'
+                  service.riskLevel === 'medium' ? (isLight ? 'text-tac-light-yellow' : 'text-yellow-400') :
+                  (isLight ? 'text-tac-light-green' : 'text-green-400')
                 }`}>
                   {service.riskLevel || 'low'}
                 </span>
@@ -76,9 +78,7 @@ export default function Timeline({ services }) {
 
       {services.length > 12 && (
         <div className="text-center pt-2">
-          <span className="text-[9px] text-ghost-muted font-mono">
-            +{services.length - 12} more
-          </span>
+          <span className={`text-[9px] font-mono ${dimClass}`}>+{services.length - 12} more</span>
         </div>
       )}
     </div>

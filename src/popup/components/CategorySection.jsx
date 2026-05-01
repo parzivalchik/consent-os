@@ -39,11 +39,19 @@ export default function CategorySection({
   setExpandedCategory,
   purgedCategories,
   onPurgeToggle,
+  theme,
 }) {
+  const isLight = theme === 'light';
   const categories = ['essential', 'analytical', 'intrusive'];
 
+  const panelClass = isLight ? 'border-tac-light-border bg-tac-light-panel' : 'border-base-lighter bg-base-light';
+  const textClass = isLight ? 'text-tac-light-text' : 'text-ghost';
+  const dimClass = isLight ? 'text-tac-light-dim' : 'text-ghost-dim';
+  const borderClass = isLight ? 'border-tac-light-border' : 'border-base-lighter';
+  const badgeClass = isLight ? 'bg-tac-light-border text-tac-light-dim' : 'bg-base-lighter text-ghost-muted';
+
   return (
-    <div className="border-t border-base-lighter bg-base-light">
+    <div className={`border-t ${panelClass}`}>
       {categories.map((category) => {
         const config = CATEGORY_CONFIG[category];
         const count = categoryCounts[category];
@@ -51,46 +59,28 @@ export default function CategorySection({
         const isPurged = purgedCategories[category];
 
         return (
-          <div key={category} className="border-b border-base-lighter last:border-b-0">
+          <div key={category} className={`border-b ${borderClass} last:border-b-0`}>
             <button
               type="button"
               onClick={() => setExpandedCategory(isExpanded ? null : category)}
-              className="w-full flex items-center justify-between px-3 py-2.5 hover:bg-base-lighter/30 transition-colors"
+              className={`w-full flex items-center justify-between px-3 py-2.5 transition-colors ${isLight ? 'hover:bg-tac-light-bg' : 'hover:bg-base-lighter/30'}`}
             >
               <div className="flex items-center gap-2">
-                <span className={category === 'intrusive' ? 'text-neon-pink' : 'text-ghost-dim'}>
+                <span className={category === 'intrusive' ? (isLight ? 'text-tac-light-magenta' : 'text-neon-pink') : dimClass}>
                   {config.icon}
                 </span>
                 <div className="text-left">
                   <div className="flex items-center gap-1.5">
-                    <span className="text-xs font-semibold text-ghost font-mono">
-                      {config.label}
-                    </span>
-                    <span className="text-[10px] px-1 py-0.5 rounded bg-base-lighter text-ghost-muted font-mono">
-                      {count}
-                    </span>
+                    <span className={`text-xs font-semibold font-mono ${textClass}`}>{config.label}</span>
+                    <span className={`text-[10px] px-1 py-0.5 rounded font-mono ${badgeClass}`}>{count}</span>
                   </div>
-                  <span className="text-[9px] text-ghost-muted font-mono">
-                    {config.description}
-                  </span>
+                  <span className={`text-[9px] font-mono ${dimClass}`}>{config.description}</span>
                 </div>
               </div>
 
               <div className="flex items-center gap-2">
-                <PurgeToggle
-                  category={category}
-                  checked={isPurged}
-                  onChange={() => onPurgeToggle(category)}
-                />
-                <svg
-                  width="12"
-                  height="12"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  className={`text-ghost-muted transition-transform ${isExpanded ? 'rotate-180' : ''}`}
-                >
+                <PurgeToggle category={category} checked={isPurged} onChange={() => onPurgeToggle(category)} theme={theme} />
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={`${dimClass} transition-transform ${isExpanded ? 'rotate-180' : ''}`}>
                   <path d="M6 9l6 6 6-6" />
                 </svg>
               </div>
@@ -100,22 +90,13 @@ export default function CategorySection({
               <div className="px-3 pb-2">
                 <div className="space-y-1 max-h-32 overflow-y-auto">
                   {groupedServices[category].slice(0, 6).map((service, index) => (
-                    <div
-                      key={service.id || index}
-                      className="flex items-center justify-between px-2 py-1 rounded bg-base/50 text-[10px] font-mono"
-                    >
-                      <span className="text-ghost-dim truncate">
-                        {service.displayName || service.name}
-                      </span>
-                      <span className="text-ghost-muted">
-                        {service.cookieCount || 0}
-                      </span>
+                    <div key={service.id || index} className={`flex items-center justify-between px-2 py-1 rounded text-[10px] font-mono ${isLight ? 'bg-tac-light-bg text-tac-light-text' : 'bg-base/50 text-ghost-dim'}`}>
+                      <span className="truncate">{(service.displayName || service.name)}</span>
+                      <span className={dimClass}>{service.cookieCount || 0}</span>
                     </div>
                   ))}
                   {groupedServices[category].length > 6 && (
-                    <div className="text-[9px] text-ghost-muted text-center py-1">
-                      +{groupedServices[category].length - 6} more
-                    </div>
+                    <div className={`text-[9px] text-center py-1 ${dimClass}`}>+{groupedServices[category].length - 6} more</div>
                   )}
                 </div>
               </div>
