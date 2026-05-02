@@ -1,4 +1,4 @@
-# Consent-os 2.0 TACTICAL
+# Consent-os 2.0
 
 <div align="center">
 
